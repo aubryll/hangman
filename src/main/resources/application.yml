@@ -1,0 +1,26 @@
+
+spring:
+  application:
+    name: hangman
+  jackson:
+    default-property-inclusion: NON_ABSENT
+
+
+com:
+  medkitDoc:
+    database:
+      host: localhost
+      port: 3308
+      database: medkitDoc_hangman
+      username: root
+      password: root
+    server:
+      url: ${spring.application.name}
+      port: 8081
+
+#Logging
+logging:
+  level:
+    root: DEBUG
+    reactor:
+      netty: DEBUG
