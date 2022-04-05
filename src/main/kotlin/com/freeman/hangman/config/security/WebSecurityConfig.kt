@@ -5,6 +5,8 @@ import org.springframework.core.convert.converter.Converter
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.authentication.AbstractAuthenticationToken
+import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity
 import org.springframework.security.config.web.server.ServerHttpSecurity
 import org.springframework.security.core.AuthenticationException
 import org.springframework.security.core.GrantedAuthority
@@ -21,6 +23,8 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtAuthenticationConverterAdapter
 
 
+@EnableWebFluxSecurity
+@EnableReactiveMethodSecurity
 class WebSecurityConfig {
 
     @Bean
@@ -28,10 +32,10 @@ class WebSecurityConfig {
         http: ServerHttpSecurity
     ): SecurityWebFilterChain? {
         http.exceptionHandling()
-            .authenticationEntryPoint { swe: ServerWebExchange, e: AuthenticationException? ->
+            .authenticationEntryPoint { swe: ServerWebExchange, _: AuthenticationException? ->
                 Mono.fromRunnable { swe.response.statusCode = HttpStatus.UNAUTHORIZED }
             }
-            .accessDeniedHandler { swe: ServerWebExchange, e: AccessDeniedException? ->
+            .accessDeniedHandler { swe: ServerWebExchange, _: AccessDeniedException? ->
                 Mono.fromRunnable { swe.response.statusCode = HttpStatus.FORBIDDEN }
             }.and()
             .csrf().disable()
