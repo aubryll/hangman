@@ -1,4 +1,4 @@
-package com.freeman.hangman.service
+package com.freeman.hangman.service.base
 
 import com.freeman.hangman.config.mapper.base.GenericMapper
 import com.freeman.hangman.config.mapper.base.GenericMapperService

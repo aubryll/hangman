@@ -1,4 +1,4 @@
-package com.freeman.hangman.service
+package com.freeman.hangman.service.base
 
 import com.freeman.hangman.domain.dto.APIResponse
 import com.freeman.hangman.domain.dto.base.BaseDto
@@ -10,7 +10,6 @@ import reactor.core.publisher.Mono
 interface IBaseService<T : BaseModel, V : BaseDto> {
 
     fun createModel(v: V): Mono<T>
-    fun createUpdateModel(v: V): Mono<T>
     fun create(v: V): Mono<ResponseEntity<APIResponse>>
     fun update(v: V): Mono<ResponseEntity<APIResponse>>
     fun fetch(id: Int): Mono<ResponseEntity<APIResponse>>
