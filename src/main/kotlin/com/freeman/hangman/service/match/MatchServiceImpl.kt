@@ -12,13 +12,13 @@ import org.springframework.stereotype.Service
 @Service
 class MatchServiceImpl @Autowired constructor(
     @Lazy mapperService: GenericMapperService,
-    @Lazy appContext: MatchRepository,
+    @Lazy repository: MatchRepository,
 ): BaseServiceImpl<Match, MatchDto, MatchRepository>(mapperService), IMatchService {
 
     private val repository: MatchRepository
 
     init {
-        this.repository = appContext
+        this.repository = repository
     }
 
     override fun getRepository(): MatchRepository {
