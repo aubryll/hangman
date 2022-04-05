@@ -8,11 +8,11 @@
 		<version>2.6.6</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.medkitDoc</groupId>
+	<groupId>com.freeman</groupId>
 	<artifactId>hangman</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>hangman</name>
-	<description>MedkitDoc hangman game interview challenge - kotlin</description>
+    <description>Hangman game interview challenge</description>
 	<properties>
 		<java.version>11</java.version>
 		<kotlin.version>1.6.10</kotlin.version>

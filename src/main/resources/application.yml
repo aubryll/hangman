@@ -7,7 +7,7 @@ spring:
 
 
 com:
-  medkitDoc:
+  freeman:
     database:
       host: localhost
       port: 3308
