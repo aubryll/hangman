@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping(value = ["\${com.freeman.url}/match"])
+@RequestMapping(value = ["\${com.freeman.url}/matches"])
 class MatchControllerImpl @Autowired constructor(
     @Lazy service: IMatchService,
 ): BaseControllerImpl<Match, MatchDto, IMatchService>(), IMatchController {
