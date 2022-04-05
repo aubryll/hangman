@@ -1,7 +1,6 @@
 package com.freeman.hangman.service.base
 
 import com.freeman.hangman.config.mapper.base.GenericMapper
-import com.freeman.hangman.config.mapper.base.GenericMapperService
 import com.freeman.hangman.domain.dto.APIPaginatedResponse
 import com.freeman.hangman.domain.dto.APIResponse
 import com.freeman.hangman.domain.dto.base.BaseDto
@@ -16,18 +15,15 @@ import reactor.core.scheduler.Schedulers
 import java.lang.reflect.ParameterizedType
 
 @Transactional
-abstract class BaseServiceImpl<T : BaseModel, V : BaseDto, E : BaseRepository<T>>(
-    g: GenericMapperService
+abstract class BaseServiceImpl<T : BaseModel, V : BaseDto, E : BaseRepository<T>, M: GenericMapper<T, V>>(
+    genericMapper: M
 ) : IBaseService<T, V> {
 
     private val genericMapper: GenericMapper<T, V>
-
     abstract fun getRepository(): E
 
     init {
-        val source = (javaClass.genericSuperclass as ParameterizedType).actualTypeArguments[0] as Class<T>
-        val target = (javaClass.genericSuperclass as ParameterizedType).actualTypeArguments[1] as Class<V>
-        genericMapper = g.getMapper(source, target) as GenericMapper<T, V>
+        this.genericMapper = genericMapper
     }
 
 
@@ -50,20 +46,20 @@ abstract class BaseServiceImpl<T : BaseModel, V : BaseDto, E : BaseRepository<T>
     }
 
     override fun update(v: V): Mono<ResponseEntity<APIResponse>> {
-        return getRepository().findById(v.id)
-            .flatMap { t -> Mono.zip(Mono.just(t), createModel(v)) }
-            .flatMap { t ->
-                val original = t.t1
-                val update = t.t2
-                Mono.just(update)
-            }.publishOn(Schedulers.boundedElastic())
-            .flatMap { t -> getRepository().save(t) }
-            .flatMap { t ->
-                Mono.just(
-                    ResponseEntity.status(HttpStatus.OK).body(APIResponse(status = HttpStatus.OK, payload = t.id))
-                )
-            }
-            .switchIfEmpty(Mono.defer { errorResponse() })
+            return getRepository().findById(v.id!!)
+                .flatMap { t -> Mono.zip(Mono.just(t), createModel(v)) }
+                .flatMap { t ->
+                    val original = t.t1
+                    val update = t.t2
+                    Mono.just(copy(original, update))
+                }.publishOn(Schedulers.boundedElastic())
+                .flatMap { t -> getRepository().save(t) }
+                .flatMap { t ->
+                    Mono.just(
+                        ResponseEntity.status(HttpStatus.OK).body(APIResponse(status = HttpStatus.OK, payload = t.id))
+                    )
+                }
+                .switchIfEmpty(Mono.defer { errorResponse() })
     }
 
     override fun fetch(id: Int): Mono<ResponseEntity<APIResponse>> {

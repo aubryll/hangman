@@ -6,10 +6,7 @@ import com.freeman.hangman.domain.model.base.BaseModel
 import com.freeman.hangman.service.base.IBaseService
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Mono
 
 
@@ -18,12 +15,12 @@ abstract class BaseControllerImpl<T: BaseModel, V: BaseDto, K: IBaseService<T, V
     abstract fun getService(): K
 
     @PostMapping(value = ["/create"])
-    override fun create(v: V): Mono<ResponseEntity<APIResponse>> {
+    override fun create(@RequestBody v: V): Mono<ResponseEntity<APIResponse>> {
         return getService().create(v)
     }
 
     @PutMapping(value = ["/update"])
-    override fun update(v: V): Mono<ResponseEntity<APIResponse>> {
+    override fun update(@RequestBody v: V): Mono<ResponseEntity<APIResponse>> {
         return getService().update(v)
     }
 

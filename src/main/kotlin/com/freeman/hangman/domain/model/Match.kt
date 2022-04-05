@@ -5,6 +5,7 @@ import com.freeman.hangman.domain.model.base.BaseModel
 import org.springframework.data.relational.core.mapping.Table
 import java.time.LocalDateTime
 
+
 @Table("matches")
 data class Match(
     val userId: String,
@@ -14,6 +15,6 @@ data class Match(
     val score: Int,
     val status: Status,
     override val id: Int,
-    override val updatedAt: LocalDateTime,
-    override val createdAt: LocalDateTime
+    override val updatedAt: LocalDateTime?,
+    override val createdAt: LocalDateTime?
 ) : BaseModel(id, updatedAt, createdAt)

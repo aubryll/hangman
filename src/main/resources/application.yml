@@ -11,8 +11,8 @@ com:
     url: freeman-hangman
     database:
       host: localhost
-      port: 3308
-      database: medkitDoc_hangman
+      port: 3306
+      database: hangman
       username: root
       password: root
     server:

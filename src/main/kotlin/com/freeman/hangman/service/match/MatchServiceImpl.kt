@@ -1,27 +1,27 @@
 package com.freeman.hangman.service.match
 
-import com.freeman.hangman.config.mapper.base.GenericMapperService
+import com.freeman.hangman.config.mapper.MatchMapper
 import com.freeman.hangman.domain.dto.MatchDto
 import com.freeman.hangman.domain.model.Match
 import com.freeman.hangman.repository.MatchRepository
 import com.freeman.hangman.service.base.BaseServiceImpl
+import org.mapstruct.factory.Mappers
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Service
 
 @Service
-class MatchServiceImpl @Autowired constructor(
-    @Lazy mapperService: GenericMapperService,
-    @Lazy repository: MatchRepository,
-): BaseServiceImpl<Match, MatchDto, MatchRepository>(mapperService), IMatchService {
+class MatchServiceImpl (
+    mapper: MatchMapper = Mappers.getMapper(MatchMapper::class.java),
+): BaseServiceImpl<Match, MatchDto, MatchRepository, MatchMapper>(mapper), IMatchService {
 
-    private val repository: MatchRepository
-
-    init {
-        this.repository = repository
-    }
+    @Autowired
+    lateinit var repo: MatchRepository
 
     override fun getRepository(): MatchRepository {
-        return repository
+        return repo
+    }
+
+    override fun copy(original: Match, update: Match): Match {
+        return update.copy(updatedAt = original.updatedAt, createdAt = original.createdAt)
     }
 }

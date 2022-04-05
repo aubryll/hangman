@@ -4,7 +4,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-@ConfigurationProperties(prefix = "com.medkit-doc.database")
+@ConfigurationProperties(prefix = "com.freeman.database")
 class DatabaseProperties{
     lateinit var host: String
     lateinit var port: String

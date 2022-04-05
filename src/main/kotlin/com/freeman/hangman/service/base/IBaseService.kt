@@ -14,5 +14,6 @@ interface IBaseService<T : BaseModel, V : BaseDto> {
     fun update(v: V): Mono<ResponseEntity<APIResponse>>
     fun fetch(id: Int): Mono<ResponseEntity<APIResponse>>
     fun fetch(pageable: Pageable): Mono<ResponseEntity<APIResponse>>
+    fun copy(original: T, update: T): T
 
 }
