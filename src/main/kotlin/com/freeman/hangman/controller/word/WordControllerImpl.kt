@@ -13,13 +13,14 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping(value = ["\${com.freeman.url}/words"])
 class WordControllerImpl @Autowired constructor(
     @Lazy service: IWordService,
-): BaseControllerImpl<Word, WordDto, IWordService>(), IWordController {
+) : BaseControllerImpl<Word, WordDto, IWordService>(), IWordController {
 
     private val service: IWordService
 
     init {
         this.service = service
     }
+
     override fun getService(): IWordService {
         return service
     }

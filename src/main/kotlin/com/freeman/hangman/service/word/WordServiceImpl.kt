@@ -10,9 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
-class WordServiceImpl (
+class WordServiceImpl(
     mapper: WordMapper = Mappers.getMapper(WordMapper::class.java),
-): BaseServiceImpl<Word, WordDto, WordRepository, WordMapper>(mapper), IWordService {
+) : BaseServiceImpl<Word, WordDto, WordRepository, WordMapper>(mapper), IWordService {
 
     @Autowired
     lateinit var repo: WordRepository

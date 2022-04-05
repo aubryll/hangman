@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 @ConfigurationProperties(prefix = "com.freeman.database")
-class DatabaseProperties{
+class DatabaseProperties {
     lateinit var host: String
     lateinit var port: String
     lateinit var database: String

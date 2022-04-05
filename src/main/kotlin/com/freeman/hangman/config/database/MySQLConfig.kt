@@ -19,7 +19,7 @@ import javax.annotation.PreDestroy
 @Configuration
 class MySQLConfig(
     private val properties: DatabaseProperties
-): AbstractR2dbcConfiguration() {
+) : AbstractR2dbcConfiguration() {
 
     lateinit var connectionPool: ConnectionPool
 
@@ -51,7 +51,7 @@ class MySQLConfig(
     }
 
     @PreDestroy
-    fun onDestroy(){
+    fun onDestroy() {
         connectionPool.close()
     }
 }

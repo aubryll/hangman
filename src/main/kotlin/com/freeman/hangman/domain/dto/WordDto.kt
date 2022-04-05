@@ -1,7 +1,6 @@
 package com.freeman.hangman.domain.dto
 
 import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.freeman.hangman.domain.dto.base.BaseDto
 import javax.validation.constraints.NotBlank
 

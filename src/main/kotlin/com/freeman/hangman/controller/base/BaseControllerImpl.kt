@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Mono
 
 
-abstract class BaseControllerImpl<T: BaseModel, V: BaseDto, K: IBaseService<T, V>>: IBaseController<V> {
+abstract class BaseControllerImpl<T : BaseModel, V : BaseDto, K : IBaseService<T, V>> : IBaseController<V> {
 
     abstract fun getService(): K
 

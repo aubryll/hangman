@@ -10,5 +10,5 @@ import org.springframework.data.r2dbc.repository.config.EnableR2dbcRepositories
 class HangmanApplication
 
 fun main(args: Array<String>) {
-	runApplication<HangmanApplication>(*args)
+    runApplication<HangmanApplication>(*args)
 }

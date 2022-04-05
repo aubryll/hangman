@@ -5,4 +5,4 @@ import com.freeman.hangman.repository.base.BaseRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface WordRepository: BaseRepository<Word>
+interface WordRepository : BaseRepository<Word>

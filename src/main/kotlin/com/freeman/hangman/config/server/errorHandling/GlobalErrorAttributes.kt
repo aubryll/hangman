@@ -10,7 +10,7 @@ import java.util.function.Consumer
 
 
 @ControllerAdvice
-class GlobalErrorAttributes :DefaultErrorAttributes() {
+class GlobalErrorAttributes : DefaultErrorAttributes() {
 
     override fun getErrorAttributes(request: ServerRequest, options: ErrorAttributeOptions): MutableMap<String, Any> {
         val map = super.getErrorAttributes(request, options)

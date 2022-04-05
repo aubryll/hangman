@@ -5,4 +5,4 @@ import com.freeman.hangman.repository.base.BaseRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface MatchRepository: BaseRepository<Match>
+interface MatchRepository : BaseRepository<Match>

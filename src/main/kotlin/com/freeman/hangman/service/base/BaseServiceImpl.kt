@@ -12,10 +12,9 @@ import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
-import java.lang.reflect.ParameterizedType
 
 @Transactional
-abstract class BaseServiceImpl<T : BaseModel, V : BaseDto, E : BaseRepository<T>, M: GenericMapper<T, V>>(
+abstract class BaseServiceImpl<T : BaseModel, V : BaseDto, E : BaseRepository<T>, M : GenericMapper<T, V>>(
     genericMapper: M
 ) : IBaseService<T, V> {
 
@@ -46,20 +45,20 @@ abstract class BaseServiceImpl<T : BaseModel, V : BaseDto, E : BaseRepository<T>
     }
 
     override fun update(v: V): Mono<ResponseEntity<APIResponse>> {
-            return getRepository().findById(v.id!!)
-                .flatMap { t -> Mono.zip(Mono.just(t), createModel(v)) }
-                .flatMap { t ->
-                    val original = t.t1
-                    val update = t.t2
-                    Mono.just(copy(original, update))
-                }.publishOn(Schedulers.boundedElastic())
-                .flatMap { t -> getRepository().save(t) }
-                .flatMap { t ->
-                    Mono.just(
-                        ResponseEntity.status(HttpStatus.OK).body(APIResponse(status = HttpStatus.OK, payload = t.id))
-                    )
-                }
-                .switchIfEmpty(Mono.defer { errorResponse() })
+        return getRepository().findById(v.id!!)
+            .flatMap { t -> Mono.zip(Mono.just(t), createModel(v)) }
+            .flatMap { t ->
+                val original = t.t1
+                val update = t.t2
+                Mono.just(copy(original, update))
+            }.publishOn(Schedulers.boundedElastic())
+            .flatMap { t -> getRepository().save(t) }
+            .flatMap { t ->
+                Mono.just(
+                    ResponseEntity.status(HttpStatus.OK).body(APIResponse(status = HttpStatus.OK, payload = t.id))
+                )
+            }
+            .switchIfEmpty(Mono.defer { errorResponse() })
     }
 
     override fun fetch(id: Int): Mono<ResponseEntity<APIResponse>> {

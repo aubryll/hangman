@@ -7,4 +7,4 @@ import org.mapstruct.Mapper
 import org.mapstruct.ReportingPolicy
 
 @Mapper(componentModel = "spring", unmappedSourcePolicy = ReportingPolicy.IGNORE)
-interface MatchMapper: GenericMapper<Match, MatchDto>
+interface MatchMapper : GenericMapper<Match, MatchDto>

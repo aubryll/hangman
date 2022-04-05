@@ -10,14 +10,14 @@ import reactor.netty.http.server.HttpServer
 @Component
 class NettyWebServerCustomizer(
     private val properties: ServerProperties
-): WebServerFactoryCustomizer<NettyReactiveWebServerFactory> {
+) : WebServerFactoryCustomizer<NettyReactiveWebServerFactory> {
 
     override fun customize(factory: NettyReactiveWebServerFactory) {
         factory.addServerCustomizers(PortCustomizer())
     }
 
 
-    inner class PortCustomizer: NettyServerCustomizer{
+    inner class PortCustomizer : NettyServerCustomizer {
         override fun apply(httpServer: HttpServer): HttpServer {
             return httpServer.port(Integer.parseInt(properties.port))
                 .wiretap(true)

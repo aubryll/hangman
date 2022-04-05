@@ -13,13 +13,14 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping(value = ["\${com.freeman.url}/matches"])
 class MatchControllerImpl @Autowired constructor(
     @Lazy service: IMatchService,
-): BaseControllerImpl<Match, MatchDto, IMatchService>(), IMatchController {
+) : BaseControllerImpl<Match, MatchDto, IMatchService>(), IMatchController {
 
     private val service: IMatchService
 
     init {
         this.service = service
     }
+
     override fun getService(): IMatchService {
         return service
     }

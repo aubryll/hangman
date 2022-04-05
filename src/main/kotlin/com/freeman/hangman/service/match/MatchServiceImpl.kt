@@ -10,9 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
-class MatchServiceImpl (
+class MatchServiceImpl(
     mapper: MatchMapper = Mappers.getMapper(MatchMapper::class.java),
-): BaseServiceImpl<Match, MatchDto, MatchRepository, MatchMapper>(mapper), IMatchService {
+) : BaseServiceImpl<Match, MatchDto, MatchRepository, MatchMapper>(mapper), IMatchService {
 
     @Autowired
     lateinit var repo: MatchRepository
