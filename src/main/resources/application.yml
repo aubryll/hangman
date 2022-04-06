@@ -4,9 +4,10 @@ spring:
   jackson:
     default-property-inclusion: NON_ABSENT
 
-
 com:
   freeman:
+    default-score: 6
+    default-chances: 6
     url: freeman-hangman
     database:
       host: localhost
@@ -17,6 +18,7 @@ com:
     server:
       url: ${spring.application.name}
       port: 8081
+
 
 #Logging
 logging:

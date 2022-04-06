@@ -10,6 +10,7 @@ import reactor.core.publisher.Mono
 interface IBaseService<T : BaseModel, V : BaseDto> {
 
     fun createModel(v: V): Mono<T>
+    fun createUpdateModel(v: V): Mono<T>
     fun create(v: V): Mono<ResponseEntity<APIResponse>>
     fun update(v: V): Mono<ResponseEntity<APIResponse>>
     fun fetch(id: Int): Mono<ResponseEntity<APIResponse>>

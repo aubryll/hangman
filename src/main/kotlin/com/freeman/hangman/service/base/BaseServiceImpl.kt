@@ -18,7 +18,7 @@ abstract class BaseServiceImpl<T : BaseModel, V : BaseDto, E : BaseRepository<T>
     genericMapper: M
 ) : IBaseService<T, V> {
 
-    private val genericMapper: GenericMapper<T, V>
+    final val genericMapper: GenericMapper<T, V>
     abstract fun getRepository(): E
 
     init {
@@ -31,6 +31,11 @@ abstract class BaseServiceImpl<T : BaseModel, V : BaseDto, E : BaseRepository<T>
         return Mono.just(t)
     }
 
+    override fun createUpdateModel(v: V): Mono<T> {
+        val t = genericMapper.toModel(v)
+        return Mono.just(t)
+    }
+
 
     override fun create(v: V): Mono<ResponseEntity<APIResponse>> {
         return createModel(v)
@@ -39,23 +44,28 @@ abstract class BaseServiceImpl<T : BaseModel, V : BaseDto, E : BaseRepository<T>
             .flatMap { t ->
                 Mono.just(
                     ResponseEntity.status(HttpStatus.CREATED)
-                        .body(APIResponse(status = HttpStatus.CREATED, payload = t.id))
+                        .body(APIResponse(status = HttpStatus.CREATED, payload = genericMapper.toDto(t)))
                 )
             }.switchIfEmpty(Mono.defer { errorResponse() })
     }
 
     override fun update(v: V): Mono<ResponseEntity<APIResponse>> {
         return getRepository().findById(v.id!!)
-            .flatMap { t -> Mono.zip(Mono.just(t), createModel(v)) }
+            .flatMap { t ->
+                Mono.zip(Mono.just(t), createUpdateModel(v))
+            }
             .flatMap { t ->
                 val original = t.t1
                 val update = t.t2
                 Mono.just(copy(original, update))
             }.publishOn(Schedulers.boundedElastic())
-            .flatMap { t -> getRepository().save(t) }
+            .flatMap { t ->
+                getRepository().save(t)
+            }
             .flatMap { t ->
                 Mono.just(
-                    ResponseEntity.status(HttpStatus.OK).body(APIResponse(status = HttpStatus.OK, payload = t.id))
+                    ResponseEntity.status(HttpStatus.OK)
+                        .body(APIResponse(status = HttpStatus.OK, payload = genericMapper.toDto(t)))
                 )
             }
             .switchIfEmpty(Mono.defer { errorResponse() })
@@ -71,7 +81,7 @@ abstract class BaseServiceImpl<T : BaseModel, V : BaseDto, E : BaseRepository<T>
                     )
                 )
             }
-            .switchIfEmpty(Mono.defer { errorResponse() })
+            .switchIfEmpty(Mono.defer { notFoundResponse() })
     }
 
     override fun fetch(pageable: Pageable): Mono<ResponseEntity<APIResponse>> {

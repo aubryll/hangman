@@ -8,6 +8,7 @@ import com.freeman.hangman.service.base.BaseServiceImpl
 import org.mapstruct.factory.Mappers
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import reactor.core.publisher.Mono
 
 @Service
 class WordServiceImpl(
@@ -20,6 +21,9 @@ class WordServiceImpl(
     override fun getRepository(): WordRepository {
         return repo
     }
+
+    override fun findUniqueWord(userId: String): Mono<Word> = repo.findUniqueWord(userId)
+
 
     override fun copy(original: Word, update: Word): Word {
         return update.copy(updatedAt = original.updatedAt, createdAt = original.createdAt)

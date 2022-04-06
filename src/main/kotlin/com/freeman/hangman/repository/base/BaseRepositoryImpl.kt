@@ -15,8 +15,8 @@ import reactor.util.function.Tuple2
 import reactor.util.function.Tuples
 
 class BaseRepositoryImpl<T : BaseModel>(
-    private val entity: RelationalEntityInformation<T, Int>,
-    private val entityOperations: R2dbcEntityOperations,
+    val entity: RelationalEntityInformation<T, Int>,
+    val entityOperations: R2dbcEntityOperations,
     converter: R2dbcConverter?
 ) :
     SimpleR2dbcRepository<T, Int>(entity, entityOperations, converter!!), BaseRepository<T> {
