@@ -43,22 +43,28 @@ class MatchServiceImpl(
             .flatMap { t ->
                 val match = t.t1
                 val word = t.t2
-                Mono.just(match.copy(wordId = word.id, chancesLeft = Integer.valueOf(defaultChances), userEnteredInputs = ""))
+                Mono.just(
+                    match.copy(
+                        wordId = word.id,
+                        chancesLeft = Integer.valueOf(defaultChances),
+                        userEnteredInputs = ""
+                    )
+                )
             }
     }
 
     private fun processAnswer(matchDto: MatchDto): Mono<MatchDto> {
         return repo.findById(matchDto.id!!).flatMap { t ->
             Mono.zip(wordService.fetch(t.wordId), Mono.just(t))
-        }.flatMap { t ->
+        }.map { t ->
             val word = t.t1.body?.payload as WordDto
             val match = t.t2
-            checkWords(match, word, matchDto.guessedLetter)
+            validateAnswer(match, word, matchDto.guessedLetter)
         }.map { t -> genericMapper.toDto(t) }.switchIfEmpty(Mono.defer { Mono.empty() })
     }
 
 
-    private fun checkWords(match: Match, word: WordDto, guessedLetter: Char?): Mono<Match> {
+    private fun validateAnswer(match: Match, word: WordDto, guessedLetter: Char?): Match {
         if (guessedLetter != null && match.userEnteredInputs!!.contains(guessedLetter) && match.status == Status.PLAYING) {
             //Append new char to userInput
             val newUserInput = "${match.userEnteredInputs}${guessedLetter}"
@@ -78,14 +84,14 @@ class MatchServiceImpl(
                     }
                         .toCharArray())
                 val isWon = if (wordSoFar == word.word) Status.WON else Status.PLAYING
-                Mono.just(updatedMatch.copy(status = isWon, score = Integer.valueOf(defaultScore)))
+                updatedMatch.copy(status = isWon, score = Integer.valueOf(defaultScore))
 
             } else {
-                Mono.just(updatedMatch)
+                updatedMatch
             }
         }
 
-        return Mono.just(match)
+        return match
     }
 
 
@@ -93,7 +99,8 @@ class MatchServiceImpl(
         return processAnswer(v)
             .flatMap { t ->
                 println("MatchDto printout: $t")
-                super.update(t) }
+                super.update(t)
+            }
             .switchIfEmpty(Mono.defer { notFoundResponse() })
     }
 
