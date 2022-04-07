@@ -6,6 +6,9 @@ spring:
 
 com:
   freeman:
+    token:
+      access-expire: 604800
+      refresh-expire: 5184000
     default-score: 6
     default-chances: 6
     url: freeman-hangman

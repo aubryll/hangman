@@ -7,5 +7,5 @@ import reactor.core.publisher.Mono
 
 @Repository
 interface UserRepository : BaseRepository<User> {
-    fun findByUsername(username: String): Mono<User>
+    fun findByEmail(email: String): Mono<User>
 }

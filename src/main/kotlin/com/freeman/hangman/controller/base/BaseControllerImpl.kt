@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Mono
+import javax.validation.Valid
 
 
 abstract class BaseControllerImpl<T : BaseModel, V : BaseDto, K : IBaseService<T, V>> : IBaseController<V> {
@@ -15,12 +16,12 @@ abstract class BaseControllerImpl<T : BaseModel, V : BaseDto, K : IBaseService<T
     abstract fun getService(): K
 
     @PostMapping(value = ["/create"])
-    override fun create(@RequestBody v: V): Mono<ResponseEntity<APIResponse>> {
+    override fun create(@RequestBody @Valid v: V): Mono<ResponseEntity<APIResponse>> {
         return getService().create(v)
     }
 
     @PutMapping(value = ["/update"])
-    override fun update(@RequestBody v: V): Mono<ResponseEntity<APIResponse>> {
+    override fun update(@RequestBody @Valid v: V): Mono<ResponseEntity<APIResponse>> {
         return getService().update(v)
     }
 

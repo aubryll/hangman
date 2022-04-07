@@ -65,7 +65,7 @@ class MatchServiceImpl(
 
 
     private fun validateAnswer(match: Match, word: WordDto, guessedLetter: Char?): Match {
-        if (guessedLetter != null && match.userEnteredInputs!!.contains(guessedLetter) && match.status == Status.PLAYING) {
+        if (guessedLetter != null && !match.userEnteredInputs!!.contains(guessedLetter) && match.status == Status.PLAYING) {
             //Append new char to userInput
             val newUserInput = "${match.userEnteredInputs}${guessedLetter}"
             //Calculate remaining chances
@@ -98,7 +98,6 @@ class MatchServiceImpl(
     override fun update(v: MatchDto): Mono<ResponseEntity<APIResponse>> {
         return processAnswer(v)
             .flatMap { t ->
-                println("MatchDto printout: $t")
                 super.update(t)
             }
             .switchIfEmpty(Mono.defer { notFoundResponse() })
