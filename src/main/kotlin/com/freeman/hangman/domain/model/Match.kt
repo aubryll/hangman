@@ -8,7 +8,7 @@ import java.time.LocalDateTime
 
 @Table("matches")
 data class Match(
-    val userId: String,
+    val userId: Int,
     val wordId: Int,
     val userEnteredInputs: String? = "",
     val chancesLeft: Int?,

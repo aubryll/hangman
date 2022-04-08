@@ -20,7 +20,7 @@ import reactor.core.publisher.Mono
 
 @RestController
 @RequestMapping(value = ["\${com.freeman.url}/auth"])
-class AuthController(val mapper: UserMapper = Mappers.getMapper(UserMapper::class.java),) {
+class AuthController(val mapper: UserMapper = Mappers.getMapper(UserMapper::class.java)) {
 
     @Autowired
     lateinit var authenticationManager: ReactiveAuthenticationManager
@@ -50,11 +50,11 @@ class AuthController(val mapper: UserMapper = Mappers.getMapper(UserMapper::clas
                 else
                     incorrectCredentials()
 
-            }.switchIfEmpty(Mono.defer { Mono.just(incorrectCredentials())})
-            }
+            }.switchIfEmpty(Mono.defer { Mono.just(incorrectCredentials()) })
     }
+}
 
-    private fun incorrectCredentials(): ResponseEntity<APIResponse> {
+private fun incorrectCredentials(): ResponseEntity<APIResponse> {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
         .body(APIResponse(status = HttpStatus.BAD_REQUEST, message = "Incorrect credentials"))
 }

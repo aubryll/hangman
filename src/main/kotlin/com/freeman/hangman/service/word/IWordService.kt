@@ -6,5 +6,5 @@ import com.freeman.hangman.service.base.IBaseService
 import reactor.core.publisher.Mono
 
 interface IWordService : IBaseService<Word, WordDto> {
-    fun findUniqueWord(userId: String): Mono<Word>
+    fun findUniqueWord(userId: Int): Mono<Word>
 }

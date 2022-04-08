@@ -22,7 +22,7 @@ class WordServiceImpl(
         return repo
     }
 
-    override fun findUniqueWord(userId: String): Mono<Word> = repo.findUniqueWord(userId)
+    override fun findUniqueWord(userId: Int): Mono<Word> = repo.findUniqueWord(userId)
 
 
     override fun copy(original: Word, update: Word): Word {

@@ -8,7 +8,7 @@ import javax.validation.constraints.NotBlank
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class MatchDto(
-    val userId: @NotBlank(message = "userid is required") String,
+    val userId: @NotBlank(message = "userid is required") Int,
     @JsonProperty(access = JsonProperty.Access.READ_ONLY) val wordId: Int? = 0,
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) val guessedLetter: Char?,
     val userEnteredInputs: String?,

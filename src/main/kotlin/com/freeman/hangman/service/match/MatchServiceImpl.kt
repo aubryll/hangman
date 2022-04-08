@@ -2,6 +2,7 @@ package com.freeman.hangman.service.match
 
 import com.freeman.hangman.config.mapper.MatchMapper
 import com.freeman.hangman.domain.Status
+import com.freeman.hangman.domain.dto.APIPaginatedResponse
 import com.freeman.hangman.domain.dto.APIResponse
 import com.freeman.hangman.domain.dto.MatchDto
 import com.freeman.hangman.domain.dto.WordDto
@@ -12,9 +13,12 @@ import com.freeman.hangman.service.word.IWordService
 import org.mapstruct.factory.Mappers
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.data.domain.Pageable
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
+import reactor.core.scheduler.Schedulers
 import java.util.*
 
 @Service
@@ -36,6 +40,28 @@ class MatchServiceImpl(
 
     override fun getRepository(): MatchRepository {
         return repo
+    }
+
+    override fun fetch(userId: Int, pageable: Pageable): Mono<ResponseEntity<APIResponse>> {
+        val tup = repo.findAll(pageable)
+        return tup.t2.publishOn(Schedulers.boundedElastic())
+            .collectList()
+            .flatMap { elements ->
+                tup.t1.flatMap { totalCount ->
+                    Mono.just(
+                        ResponseEntity.status(HttpStatus.OK).body(
+                            APIResponse(
+                                status = HttpStatus.OK, payload = APIPaginatedResponse(
+                                    totalElements = totalCount,
+                                    elements = genericMapper.toDto(elements.filter { t -> t.userId == userId }),
+                                    pageNumber = pageable.pageNumber,
+                                    pageSize = pageable.pageSize
+                                )
+                            )
+                        )
+                    )
+                }
+            }.switchIfEmpty(Mono.defer { notFoundResponse() })
     }
 
     override fun createModel(v: MatchDto): Mono<Match> {
@@ -64,12 +90,15 @@ class MatchServiceImpl(
     }
 
 
-    private fun validateAnswer(match: Match, word: WordDto, guessedLetter: Char?): Match {
-        if (guessedLetter != null && !match.userEnteredInputs!!.contains(guessedLetter) && match.status == Status.PLAYING) {
+    private fun validateAnswer(match: Match, word: WordDto, letter: Char?): Match {
+
+        if (letter != null && !match.userEnteredInputs!!.contains(letter.lowercaseChar()) && match.status == Status.PLAYING) {
+            val guessedLetter = letter.lowercaseChar()
             //Append new char to userInput
             val newUserInput = "${match.userEnteredInputs}${guessedLetter}"
             //Calculate remaining chances
-            val remainingChances = match.chancesLeft?.minus((if (word.word.contains(guessedLetter)) 0 else 1))
+            println("Received word ${word.word} entered text $guessedLetter")
+            val remainingChances = match.chancesLeft?.minus((if (word.word.lowercase(Locale.getDefault()).contains(guessedLetter)) 0 else 1))
             //If user has 0 chances they have lost
             val newStatus = if (remainingChances == 0) Status.LOST else Status.PLAYING
             val updatedMatch =
@@ -84,7 +113,7 @@ class MatchServiceImpl(
                     }
                         .toCharArray())
                 val isWon = if (wordSoFar == word.word) Status.WON else Status.PLAYING
-                updatedMatch.copy(status = isWon, score = Integer.valueOf(defaultScore))
+                updatedMatch.copy(status = isWon, score = if(isWon == Status.WON) Integer.valueOf(defaultScore) else 0)
 
             } else {
                 updatedMatch

@@ -37,7 +37,8 @@ class JWTUtil(private val secretKey: SecretKey = Keys.secretKeyFor(SignatureAlgo
             .setId(userDto.id.toString())
             .setSubject(userDto.email)
             .setExpiration(
-                Date.from(currentTime.plusSeconds(accessExpInSecs).toInstant()))
+                Date.from(currentTime.plusSeconds(accessExpInSecs).toInstant())
+            )
             .signWith(secretKey)
             .compact()
 
@@ -54,6 +55,7 @@ class JWTUtil(private val secretKey: SecretKey = Keys.secretKeyFor(SignatureAlgo
     fun getSubject(jws: String?): String? {
         return getAllClaims(jws).subject
     }
+
     fun getId(jws: String?): String? {
         return getAllClaims(jws).id
     }

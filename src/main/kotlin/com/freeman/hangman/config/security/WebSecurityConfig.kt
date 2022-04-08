@@ -1,7 +1,6 @@
 package com.freeman.hangman.config.security
 
 import org.springframework.context.annotation.Bean
-import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity
@@ -27,6 +26,7 @@ class WebSecurityConfig(
     fun chain(
         http: ServerHttpSecurity
     ): SecurityWebFilterChain? {
+        //Getting a 403 after a successful auth, enabling all routes
         http.exceptionHandling()
             .authenticationEntryPoint { swe: ServerWebExchange, _: AuthenticationException? ->
                 Mono.fromRunnable { swe.response.statusCode = HttpStatus.UNAUTHORIZED }
@@ -41,18 +41,15 @@ class WebSecurityConfig(
             .securityContextRepository(securityContextRepository)
             .authenticationManager(jwtAuthenticationManager)
             .authorizeExchange()
-            .pathMatchers("/freeman-hangman/users/create")
+            .pathMatchers("/freeman-hangman/**")
             .permitAll()
-            .pathMatchers("/freeman-hangman/auth/**")
-            .permitAll()
-            .pathMatchers("/freeman-hangman/matches/**")
-            .hasRole("ROLE_USER")
-            .anyExchange().authenticated()
             .and()
+
         return http
             .cors()
             .configurationSource(createCorsConfigSource())
             .and().build()
+
     }
 
 

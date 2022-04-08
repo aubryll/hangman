@@ -16,7 +16,6 @@ abstract class BaseControllerImpl<T : BaseModel, V : BaseDto, K : IBaseService<T
 
     abstract fun getService(): K
 
-    @Secured("ROLE_ADMIN")
     @PostMapping(value = ["/create"])
     override fun create(@RequestBody @Valid v: V): Mono<ResponseEntity<APIResponse>> {
         return getService().create(v)
@@ -27,7 +26,6 @@ abstract class BaseControllerImpl<T : BaseModel, V : BaseDto, K : IBaseService<T
         return getService().update(v)
     }
 
-    @Secured("ROLE_USER")
     @GetMapping(value = ["/{id}"])
     override fun fetch(@PathVariable id: Int): Mono<ResponseEntity<APIResponse>> {
         return getService().fetch(id)

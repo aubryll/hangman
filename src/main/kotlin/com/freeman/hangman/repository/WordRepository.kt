@@ -24,6 +24,6 @@ interface WordRepository : BaseRepository<Word> {
                 "        LIMIT  1) r\n" +
                 "WHERE  words.id = r.id "
     )
-    fun findUniqueWord(userId: String): Mono<Word>
+    fun findUniqueWord(userId: Int): Mono<Word>
 
 }

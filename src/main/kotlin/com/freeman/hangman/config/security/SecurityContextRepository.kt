@@ -22,7 +22,7 @@ class SecurityContextRepository(val authenticationManager: JwtAuthenticationMana
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             val authToken = authHeader.substring(7)
             val auth = UsernamePasswordAuthenticationToken(authToken, authToken)
-            return authenticationManager.authenticate(auth).map { t-> SecurityContextImpl(t) }
+            return authenticationManager.authenticate(auth).map { t -> SecurityContextImpl(t) }
         }
         return Mono.empty()
     }

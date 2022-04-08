@@ -10,8 +10,8 @@ import java.time.LocalDateTime
 @Table("users")
 data class User(
     override val id: Int,
-     val name: String,
-     val email: String,
+    val name: String,
+    val email: String,
     private val password: String,
     override val updatedAt: LocalDateTime?,
     override val createdAt: LocalDateTime?
