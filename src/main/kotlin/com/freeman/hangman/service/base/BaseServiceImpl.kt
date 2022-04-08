@@ -25,6 +25,7 @@ abstract class BaseServiceImpl<T : BaseModel, V : BaseDto, E : BaseRepository<T>
         this.genericMapper = genericMapper
     }
 
+    override fun toDto(v: T): V = genericMapper.toDto(v)
 
     override fun createModel(v: V): Mono<T> {
         val t = genericMapper.toModel(v)

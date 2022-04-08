@@ -3,6 +3,7 @@ package com.freeman.hangman.domain.model
 import com.freeman.hangman.domain.model.base.BaseModel
 import org.springframework.data.relational.core.mapping.Table
 import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import java.time.LocalDateTime
 
@@ -18,7 +19,9 @@ data class User(
     BaseModel(id, updatedAt, createdAt) {
 
     override fun getAuthorities(): Collection<GrantedAuthority> {
-        return ArrayList()
+        val authority = ArrayList<GrantedAuthority>()
+        authority.add(SimpleGrantedAuthority("ROLE_USER"))
+        return authority
     }
 
     override fun getPassword(): String {

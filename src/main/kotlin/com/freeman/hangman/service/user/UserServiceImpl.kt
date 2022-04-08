@@ -1,8 +1,6 @@
 package com.freeman.hangman.service.user
 
 import com.freeman.hangman.config.mapper.UserMapper
-import com.freeman.hangman.config.security.JWTUtil
-import com.freeman.hangman.config.security.JwtAuthenticationManager
 import com.freeman.hangman.domain.dto.APIResponse
 import com.freeman.hangman.domain.dto.UserDto
 import com.freeman.hangman.domain.model.User
@@ -12,7 +10,6 @@ import org.mapstruct.factory.Mappers
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.security.core.userdetails.ReactiveUserDetailsService
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -31,7 +28,6 @@ class UserServiceImpl(
     lateinit var passwordEncoder: PasswordEncoder
 
 
-
     override fun findByUsername(username: String): Mono<UserDetails> =
         userRepository.findByEmail(username).map { t -> User.build(t) }
 
@@ -42,7 +38,6 @@ class UserServiceImpl(
     }
 
     override fun create(v: UserDto): Mono<ResponseEntity<APIResponse>> {
-
         return userRepository.findByEmail(v.email)
             .map {
                 ResponseEntity.status(HttpStatus.BAD_REQUEST)

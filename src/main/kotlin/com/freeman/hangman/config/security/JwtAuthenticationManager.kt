@@ -14,21 +14,23 @@ class JwtAuthenticationManager(
     val userDetailsService: ReactiveUserDetailsService
 ) : ReactiveAuthenticationManager {
 
-    override fun authenticate(authentication: Authentication): Mono<Authentication?>? {
+    override fun authenticate(authentication: Authentication): Mono<Authentication> {
         val token = authentication.credentials as String
         val username: String? = try {
             if (!jwtUtil.verify(token)) throw Exception()
             jwtUtil.getSubject(token)
         } catch (e: Exception) {
-            return Mono.error(BadCredentialsException("invalid credentials"))
+            return Mono.error(BadCredentialsException("Invalid credentials"))
         }
         return userDetailsService.findByUsername(username)
-            .switchIfEmpty(Mono.error(BadCredentialsException("invalid credentials")))
+            .switchIfEmpty(Mono.error(BadCredentialsException("Invalid credentials")))
             .map { userDetails: UserDetails ->
                 JwtAuthenticationToken(
                     token,
                     userDetails,
+                    userDetails.authorities
                 )
+
             }
     }
 }

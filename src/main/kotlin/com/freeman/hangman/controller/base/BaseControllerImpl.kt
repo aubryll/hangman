@@ -6,6 +6,7 @@ import com.freeman.hangman.domain.model.base.BaseModel
 import com.freeman.hangman.service.base.IBaseService
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.annotation.Secured
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Mono
 import javax.validation.Valid
@@ -15,6 +16,7 @@ abstract class BaseControllerImpl<T : BaseModel, V : BaseDto, K : IBaseService<T
 
     abstract fun getService(): K
 
+    @Secured("ROLE_ADMIN")
     @PostMapping(value = ["/create"])
     override fun create(@RequestBody @Valid v: V): Mono<ResponseEntity<APIResponse>> {
         return getService().create(v)
@@ -25,6 +27,7 @@ abstract class BaseControllerImpl<T : BaseModel, V : BaseDto, K : IBaseService<T
         return getService().update(v)
     }
 
+    @Secured("ROLE_USER")
     @GetMapping(value = ["/{id}"])
     override fun fetch(@PathVariable id: Int): Mono<ResponseEntity<APIResponse>> {
         return getService().fetch(id)

@@ -1,17 +1,14 @@
 package com.freeman.hangman.config.security
 
-import com.freeman.hangman.config.properties.ServerProperties
 import org.springframework.context.annotation.Bean
+import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity
-import org.springframework.security.config.web.server.SecurityWebFiltersOrder
 import org.springframework.security.config.web.server.ServerHttpSecurity
 import org.springframework.security.core.AuthenticationException
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.web.server.SecurityWebFilterChain
-import org.springframework.security.web.server.authentication.AuthenticationWebFilter
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.reactive.CorsConfigurationSource
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource
@@ -21,7 +18,10 @@ import reactor.core.publisher.Mono
 
 @EnableWebFluxSecurity
 @EnableReactiveMethodSecurity
-class WebSecurityConfig(val authWebFilter: AuthenticationWebFilter) {
+class WebSecurityConfig(
+    val jwtAuthenticationManager: JwtAuthenticationManager,
+    val securityContextRepository: SecurityContextRepository
+) {
 
     @Bean
     fun chain(
@@ -36,11 +36,19 @@ class WebSecurityConfig(val authWebFilter: AuthenticationWebFilter) {
             }.and()
             .csrf().disable()
             .formLogin().disable()
+            .httpBasic().disable()
+            .logout().disable()
+            .securityContextRepository(securityContextRepository)
+            .authenticationManager(jwtAuthenticationManager)
             .authorizeExchange()
-            .pathMatchers("/freeman-hangman/users/**").permitAll()
-            .pathMatchers("/freeman-hangman/auth/**").permitAll()
+            .pathMatchers("/freeman-hangman/users/create")
+            .permitAll()
+            .pathMatchers("/freeman-hangman/auth/**")
+            .permitAll()
+            .pathMatchers("/freeman-hangman/matches/**")
+            .hasRole("ROLE_USER")
+            .anyExchange().authenticated()
             .and()
-            //.addFilterAfter(authWebFilter, SecurityWebFiltersOrder.AUTHENTICATION)
         return http
             .cors()
             .configurationSource(createCorsConfigSource())

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Component
+import java.time.ZonedDateTime
 import java.util.*
 import javax.crypto.SecretKey
 
@@ -30,9 +31,13 @@ class JWTUtil(private val secretKey: SecretKey = Keys.secretKeyFor(SignatureAlgo
     }
 
     fun encode(userDto: UserDto): String {
+        val accessExpInSecs: Long = accessTokenExpire.toLong()
+        val currentTime = ZonedDateTime.now()
         return Jwts.builder()
+            .setId(userDto.id.toString())
             .setSubject(userDto.email)
-            .setExpiration(Date(System.currentTimeMillis() + this.accessTokenExpire.toLong()))
+            .setExpiration(
+                Date.from(currentTime.plusSeconds(accessExpInSecs).toInstant()))
             .signWith(secretKey)
             .compact()
 
@@ -49,9 +54,12 @@ class JWTUtil(private val secretKey: SecretKey = Keys.secretKeyFor(SignatureAlgo
     fun getSubject(jws: String?): String? {
         return getAllClaims(jws).subject
     }
+    fun getId(jws: String?): String? {
+        return getAllClaims(jws).id
+    }
 
     fun verify(jws: String?): Boolean {
-        return getAllClaims(jws).expiration.before(Date())
+        return !getAllClaims(jws).expiration.before(Date())
     }
 
 }
