@@ -98,7 +98,9 @@ class MatchServiceImpl(
             val newUserInput = "${match.userEnteredInputs}${guessedLetter}"
             //Calculate remaining chances
             println("Received word ${word.word} entered text $guessedLetter")
-            val remainingChances = match.chancesLeft?.minus((if (word.word.lowercase(Locale.getDefault()).contains(guessedLetter)) 0 else 1))
+            val remainingChances = match.chancesLeft?.minus(
+                (if (word.word.lowercase(Locale.getDefault()).contains(guessedLetter)) 0 else 1)
+            )
             //If user has 0 chances they have lost
             val newStatus = if (remainingChances == 0) Status.LOST else Status.PLAYING
             val updatedMatch =
@@ -113,7 +115,7 @@ class MatchServiceImpl(
                     }
                         .toCharArray())
                 val isWon = if (wordSoFar == word.word) Status.WON else Status.PLAYING
-                updatedMatch.copy(status = isWon, score = if(isWon == Status.WON) Integer.valueOf(defaultScore) else 0)
+                updatedMatch.copy(status = isWon, score = if (isWon == Status.WON) Integer.valueOf(defaultScore) else 0)
 
             } else {
                 updatedMatch

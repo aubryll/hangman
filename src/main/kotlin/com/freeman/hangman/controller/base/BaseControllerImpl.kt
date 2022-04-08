@@ -6,7 +6,6 @@ import com.freeman.hangman.domain.model.base.BaseModel
 import com.freeman.hangman.service.base.IBaseService
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.ResponseEntity
-import org.springframework.security.access.annotation.Secured
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Mono
 import javax.validation.Valid
