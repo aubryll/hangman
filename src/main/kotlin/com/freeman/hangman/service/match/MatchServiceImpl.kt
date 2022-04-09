@@ -58,7 +58,7 @@ class MatchServiceImpl(
                             APIResponse(
                                 status = HttpStatus.OK, payload = APIPaginatedResponse(
                                     totalElements = t.t1,
-                                    elements = genericMapper.toDto(elements.filter { z -> z.userId == z.userId}),
+                                    elements = genericMapper.toDto(elements.filter { z -> z.userId == t.t2.id}),
                                     pageNumber = pageable.pageNumber,
                                     pageSize = pageable.pageSize
                                 )
