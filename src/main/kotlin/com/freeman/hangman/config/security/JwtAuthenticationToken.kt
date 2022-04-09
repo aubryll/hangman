@@ -11,6 +11,10 @@ class JwtAuthenticationToken(
 ) :
     AbstractAuthenticationToken(authority) {
 
+    init {
+        super.setAuthenticated(true)
+    }
+
     override fun getCredentials(): Any = token
 
     override fun getPrincipal(): Any = userDetails!!

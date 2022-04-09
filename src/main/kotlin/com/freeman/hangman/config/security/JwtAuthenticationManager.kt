@@ -14,6 +14,8 @@ class JwtAuthenticationManager(
     val userDetailsService: ReactiveUserDetailsService
 ) : ReactiveAuthenticationManager {
 
+
+
     override fun authenticate(authentication: Authentication): Mono<Authentication> {
         val token = authentication.credentials as String
         val username: String? = try {
@@ -28,7 +30,8 @@ class JwtAuthenticationManager(
                 JwtAuthenticationToken(
                     token,
                     userDetails,
-                    userDetails.authorities
+                    userDetails.authorities,
+
                 )
 
             }

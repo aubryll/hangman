@@ -1,6 +1,7 @@
 package com.freeman.hangman.config.security
 
 import org.springframework.context.annotation.Bean
+import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity
@@ -19,41 +20,38 @@ import reactor.core.publisher.Mono
 @EnableReactiveMethodSecurity
 class WebSecurityConfig(
     val jwtAuthenticationManager: JwtAuthenticationManager,
-    val securityContextRepository: SecurityContextRepository
+    val securityContextRepository: SecurityContextRepository,
 ) {
 
     @Bean
     fun chain(
         http: ServerHttpSecurity
-    ): SecurityWebFilterChain? {
-        //Getting a 403 after a successful auth, enabling all routes
-        http.exceptionHandling()
+    ): SecurityWebFilterChain {
+        return http.csrf().disable()
+            .exceptionHandling()
             .authenticationEntryPoint { swe: ServerWebExchange, _: AuthenticationException? ->
                 Mono.fromRunnable { swe.response.statusCode = HttpStatus.UNAUTHORIZED }
             }
             .accessDeniedHandler { swe: ServerWebExchange, _: AccessDeniedException? ->
                 Mono.fromRunnable { swe.response.statusCode = HttpStatus.FORBIDDEN }
             }.and()
-            .csrf().disable()
-            .formLogin().disable()
-            .httpBasic().disable()
-            .logout().disable()
             .securityContextRepository(securityContextRepository)
             .authenticationManager(jwtAuthenticationManager)
             .authorizeExchange()
-            .pathMatchers("/freeman-hangman/**")
+            .pathMatchers("/freeman-hangman/auth/**", "/freeman-hangman/users/create")
             .permitAll()
+            .pathMatchers(HttpMethod.OPTIONS).permitAll()
+            .anyExchange()
+            .authenticated()
             .and()
-
-        return http
             .cors()
             .configurationSource(createCorsConfigSource())
-            .and().build()
-
+            .and()
+            .build()
     }
 
 
-    private fun createCorsConfigSource(): CorsConfigurationSource? {
+    private fun createCorsConfigSource(): CorsConfigurationSource {
         val source = UrlBasedCorsConfigurationSource()
         val config = CorsConfiguration()
         config.addAllowedOrigin("http://localhost:3000")
