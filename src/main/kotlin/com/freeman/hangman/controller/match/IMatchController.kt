@@ -6,6 +6,4 @@ import com.freeman.hangman.domain.dto.MatchDto
 import org.springframework.http.ResponseEntity
 import reactor.core.publisher.Mono
 
-interface IMatchController : IBaseController<MatchDto> {
-    fun fetch(userId: Int, page: Int, size: Int): Mono<ResponseEntity<APIResponse>>
-}
+interface IMatchController : IBaseController<MatchDto>

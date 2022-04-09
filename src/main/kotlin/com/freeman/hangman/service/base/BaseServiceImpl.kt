@@ -1,9 +1,11 @@
 package com.freeman.hangman.service.base
 
 import com.freeman.hangman.config.mapper.base.GenericMapper
+import com.freeman.hangman.config.security.JwtAuthenticationToken
 import com.freeman.hangman.domain.dto.APIPaginatedResponse
 import com.freeman.hangman.domain.dto.APIResponse
 import com.freeman.hangman.domain.dto.base.BaseDto
+import com.freeman.hangman.domain.model.User
 import com.freeman.hangman.domain.model.base.BaseModel
 import com.freeman.hangman.repository.base.BaseRepository
 import org.springframework.data.domain.Pageable
@@ -12,6 +14,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
+import java.security.Principal
 
 @Transactional
 abstract class BaseServiceImpl<T : BaseModel, V : BaseDto, E : BaseRepository<T>, M : GenericMapper<T, V>>(

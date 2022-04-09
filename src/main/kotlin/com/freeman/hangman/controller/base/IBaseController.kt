@@ -4,6 +4,7 @@ import com.freeman.hangman.domain.dto.APIResponse
 import com.freeman.hangman.domain.dto.base.BaseDto
 import org.springframework.http.ResponseEntity
 import reactor.core.publisher.Mono
+import java.security.Principal
 
 interface IBaseController<V : BaseDto> {
     fun create(v: V): Mono<ResponseEntity<APIResponse>>

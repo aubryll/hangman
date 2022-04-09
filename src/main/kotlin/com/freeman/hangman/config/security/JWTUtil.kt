@@ -34,7 +34,6 @@ class JWTUtil(private val secretKey: SecretKey = Keys.secretKeyFor(SignatureAlgo
         val accessExpInSecs: Long = accessTokenExpire.toLong()
         val currentTime = ZonedDateTime.now()
         return Jwts.builder()
-            .setId(userDto.id.toString())
             .setSubject(userDto.email)
             .setExpiration(
                 Date.from(currentTime.plusSeconds(accessExpInSecs).toInstant())

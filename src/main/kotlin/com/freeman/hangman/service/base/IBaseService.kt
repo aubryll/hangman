@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity
 import reactor.core.publisher.Mono
 
 interface IBaseService<T : BaseModel, V : BaseDto> {
-
     fun toDto(v: T): V
     fun createModel(v: V): Mono<T>
     fun createUpdateModel(v: V): Mono<T>
@@ -17,5 +16,4 @@ interface IBaseService<T : BaseModel, V : BaseDto> {
     fun fetch(id: Int): Mono<ResponseEntity<APIResponse>>
     fun fetch(pageable: Pageable): Mono<ResponseEntity<APIResponse>>
     fun copy(original: T, update: T): T
-
 }

@@ -8,10 +8,7 @@ import com.freeman.hangman.service.match.IMatchService
 import org.springframework.context.annotation.Lazy
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Mono
 
 @RestController
@@ -30,12 +27,8 @@ class MatchControllerImpl(
         return service
     }
 
-    @GetMapping(value = ["{userId}/{page}/{size}"])
-    override fun fetch(
-        @PathVariable userId: Int,
-        @PathVariable page: Int,
-        @PathVariable size: Int
-    ): Mono<ResponseEntity<APIResponse>> {
-        return getService().fetch(userId, PageRequest.of(page, size))
+    //We will not be using the request body when creating a match
+    override fun create(@RequestBody(required = false) v: MatchDto): Mono<ResponseEntity<APIResponse>> {
+        return service.create(v)
     }
 }

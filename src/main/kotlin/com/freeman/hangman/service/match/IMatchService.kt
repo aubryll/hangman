@@ -8,6 +8,4 @@ import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import reactor.core.publisher.Mono
 
-interface IMatchService : IBaseService<Match, MatchDto> {
-    fun fetch(userId: Int, pageable: Pageable): Mono<ResponseEntity<APIResponse>>
-}
+interface IMatchService : IBaseService<Match, MatchDto>

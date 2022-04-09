@@ -1,12 +1,14 @@
 package com.freeman.hangman.service.match
 
 import com.freeman.hangman.config.mapper.MatchMapper
+import com.freeman.hangman.config.security.JwtAuthenticationToken
 import com.freeman.hangman.domain.Status
 import com.freeman.hangman.domain.dto.APIPaginatedResponse
 import com.freeman.hangman.domain.dto.APIResponse
 import com.freeman.hangman.domain.dto.MatchDto
 import com.freeman.hangman.domain.dto.WordDto
 import com.freeman.hangman.domain.model.Match
+import com.freeman.hangman.domain.model.User
 import com.freeman.hangman.repository.MatchRepository
 import com.freeman.hangman.service.base.BaseServiceImpl
 import com.freeman.hangman.service.word.IWordService
@@ -16,9 +18,11 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.context.ReactiveSecurityContextHolder
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
+import java.security.Principal
 import java.util.*
 
 @Service
@@ -42,18 +46,19 @@ class MatchServiceImpl(
         return repo
     }
 
-    override fun fetch(userId: Int, pageable: Pageable): Mono<ResponseEntity<APIResponse>> {
+    override fun fetch(pageable: Pageable): Mono<ResponseEntity<APIResponse>> {
+        val authentication = ReactiveSecurityContextHolder.getContext().map { t -> t.authentication.principal as User }
         val tup = repo.findAll(pageable)
         return tup.t2.publishOn(Schedulers.boundedElastic())
             .collectList()
             .flatMap { elements ->
-                tup.t1.flatMap { totalCount ->
+                tup.t1.zipWith(authentication).flatMap { t ->
                     Mono.just(
                         ResponseEntity.status(HttpStatus.OK).body(
                             APIResponse(
                                 status = HttpStatus.OK, payload = APIPaginatedResponse(
-                                    totalElements = totalCount,
-                                    elements = genericMapper.toDto(elements.filter { t -> t.userId == userId }),
+                                    totalElements = t.t1,
+                                    elements = genericMapper.toDto(elements.filter { z -> z.userId == z.userId}),
                                     pageNumber = pageable.pageNumber,
                                     pageSize = pageable.pageSize
                                 )
@@ -65,12 +70,14 @@ class MatchServiceImpl(
     }
 
     override fun createModel(v: MatchDto): Mono<Match> {
-        return Mono.zip(super.createModel(v), wordService.findUniqueWord(v.userId))
+        val authentication = ReactiveSecurityContextHolder.getContext().map { t -> t.authentication.principal as User }
+        return Mono.zip(super.createModel(v), wordService.findUniqueWord(v.userId), authentication)
             .flatMap { t ->
                 val match = t.t1
                 val word = t.t2
                 Mono.just(
                     match.copy(
+                        userId = t.t3.id,
                         wordId = word.id,
                         chancesLeft = Integer.valueOf(defaultChances),
                         userEnteredInputs = ""
@@ -97,7 +104,6 @@ class MatchServiceImpl(
             //Append new char to userInput
             val newUserInput = "${match.userEnteredInputs}${guessedLetter}"
             //Calculate remaining chances
-            println("Received word ${word.word} entered text $guessedLetter")
             val remainingChances = match.chancesLeft?.minus(
                 (if (word.word.lowercase(Locale.getDefault()).contains(guessedLetter)) 0 else 1)
             )
