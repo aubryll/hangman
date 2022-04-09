@@ -40,6 +40,7 @@ class WebSecurityConfig(
             .authorizeExchange()
             .pathMatchers("/freeman-hangman/auth/**", "/freeman-hangman/users/create")
             .permitAll()
+            .pathMatchers("/freeman-hangman/words/**").hasAnyRole("ROLE_ADMIN")
             .pathMatchers(HttpMethod.OPTIONS).permitAll()
             .anyExchange()
             .authenticated()
