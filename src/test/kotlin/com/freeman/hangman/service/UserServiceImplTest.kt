@@ -123,7 +123,6 @@ class UserServiceImplTest {
     }
 
 
-
     @Test
     fun givenUserDto_notEqualToUser() {
         val userDto = buildUserDto()
@@ -150,8 +149,6 @@ class UserServiceImplTest {
                 assertThat(newUser.name).isEqualTo(expected.name)}
             .verifyComplete()
     }
-
-
 
 
     @Test
