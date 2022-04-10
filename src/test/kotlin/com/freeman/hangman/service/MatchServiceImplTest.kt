@@ -102,7 +102,6 @@ class MatchServiceImplTest {
         assertThat(match.chancesLeft).isEqualTo(expected.chancesLeft)
         assertThat(match.score).isEqualTo(expected.score)
         assertThat(match.status).isEqualTo(expected.status)
-        assertThat(match.createdAt).isNotEqualTo(expected.createdAt)
     }
 
     //Tests
