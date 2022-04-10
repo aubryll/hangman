@@ -1,7 +1,6 @@
 package com.freeman.hangman.service.match
 
 import com.freeman.hangman.config.mapper.MatchMapper
-import com.freeman.hangman.config.security.JwtAuthenticationToken
 import com.freeman.hangman.domain.Status
 import com.freeman.hangman.domain.dto.APIPaginatedResponse
 import com.freeman.hangman.domain.dto.APIResponse
@@ -22,7 +21,6 @@ import org.springframework.security.core.context.ReactiveSecurityContextHolder
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
-import java.security.Principal
 import java.util.*
 
 @Service
@@ -45,6 +43,7 @@ class MatchServiceImpl(
     override fun getRepository(): MatchRepository {
         return repo
     }
+
 
     override fun fetch(pageable: Pageable): Mono<ResponseEntity<APIResponse>> {
         val authentication = ReactiveSecurityContextHolder.getContext().map { t -> t.authentication.principal as User }
@@ -98,7 +97,6 @@ class MatchServiceImpl(
 
 
     private fun validateAnswer(match: Match, word: WordDto, letter: Char?): Match {
-
         if (letter != null && !match.userEnteredInputs!!.contains(letter.lowercaseChar()) && match.status == Status.PLAYING) {
             val guessedLetter = letter.lowercaseChar()
             //Append new char to userInput
