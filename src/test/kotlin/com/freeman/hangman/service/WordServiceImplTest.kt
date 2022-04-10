@@ -1,7 +1,6 @@
 package com.freeman.hangman.service
 
 import com.freeman.hangman.domain.dto.*
-import com.freeman.hangman.domain.model.Match
 import com.freeman.hangman.domain.model.Word
 import com.freeman.hangman.repository.WordRepository
 import com.freeman.hangman.service.word.WordServiceImpl
@@ -54,11 +53,11 @@ class WordServiceImplTest {
 
     }
 
-    fun buildWord(): Word{
+    private fun buildWord(): Word{
         return Word("test word", TEST_WORD_ID, CURRENT_DATE_TIME, CURRENT_DATE_TIME)
     }
 
-    fun buildWordDto(): WordDto{
+    private fun buildWordDto(): WordDto{
         return WordDto("test word", TEST_WORD_ID, CURRENT_DATE_TIME.toString())
     }
 
@@ -82,7 +81,7 @@ class WordServiceImplTest {
     @Test
     fun givenMatched_expectedWord() {
         val word = buildWord()
-        Mockito.`when`(repo.findById(TEST_WORD_ID)).thenReturn(Mono.just(word))
+        `when`(repo.findById(TEST_WORD_ID)).thenReturn(Mono.just(word))
         val wordMono = wordService.fetch(TEST_WORD_ID)
         StepVerifier.create(wordMono)
             .consumeNextWith { newWord -> Assertions.assertThat((newWord.body?.payload as WordDto).id).isEqualTo(TEST_WORD_ID) }
