@@ -8,6 +8,7 @@ import com.freeman.hangman.repository.MatchRepository
 import com.freeman.hangman.repository.UserRepository
 import com.freeman.hangman.repository.WordRepository
 import com.freeman.hangman.service.word.WordServiceImpl
+import com.freeman.hangman.util.Utils
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mockito
@@ -27,6 +28,11 @@ import org.springframework.web.reactive.function.BodyInserters
 import reactor.core.publisher.Mono
 import java.time.LocalDateTime
 import com.freeman.hangman.util.Utils.Companion.any
+import org.springframework.data.domain.PageRequest
+import org.springframework.http.HttpHeaders
+import reactor.core.publisher.Flux
+import reactor.util.function.Tuple2
+import reactor.util.function.Tuples
 
 @ExtendWith(SpringExtension::class)
 @WebFluxTest(WordControllerImpl::class)
@@ -36,8 +42,6 @@ class WordControllerImplTest {
     @Autowired
     lateinit var webClient: WebTestClient
 
-    @MockBean
-    lateinit var wordService: WordServiceImpl
 
     @MockBean
     lateinit var wordRepository: WordRepository
@@ -62,10 +66,10 @@ class WordControllerImplTest {
 
     @Test
     @WithMockUser(username = "testuser@gmail.com", authorities = ["ROLE_USER", "ROLE_ADMIN"], password = "pwd")
-    fun givenID_expectedWord(){
+    fun givenWordDTO_expectedCreateWord(){
         val wordDto = WordDto(word = "test word", id = 0, createdAt = CURRENT_DATE_TIME.toString())
-        val word = Word("test word", 0, CURRENT_DATE_TIME, CURRENT_DATE_TIME)
-        `when`(wordRepository.save(word)).thenReturn(Mono.just(word))
+        val word = Word("test word", 0, null, CURRENT_DATE_TIME)
+        `when`(wordRepository.save(any(Word::class.java))).thenReturn(Mono.just(word))
 
         webClient.mutateWith(csrf()).post()
             .uri("/freeman-hangman/words/create")
@@ -76,6 +80,58 @@ class WordControllerImplTest {
             .isCreated
 
         verify(wordRepository, times(1)).save(word)
+    }
+
+    @Test
+    @WithMockUser(username = "testuser@gmail.com", authorities = ["ROLE_USER", "ROLE_ADMIN"], password = "pwd")
+    fun givenWordDTO_expectedUpdateWord(){
+        val wordDto = WordDto(word = "test word", id = TEST_WORD_ID, createdAt = CURRENT_DATE_TIME.toString())
+        val word = Word("test word", TEST_WORD_ID, CURRENT_DATE_TIME, CURRENT_DATE_TIME)
+        `when`(wordRepository.save(any(Word::class.java))).thenReturn(Mono.just(word))
+        `when`(wordRepository.findById(TEST_WORD_ID)).thenReturn(Mono.just(buildWord()))
+
+        webClient.mutateWith(csrf()).put()
+            .uri("/freeman-hangman/words/update")
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(BodyInserters.fromValue(wordDto))
+            .exchange()
+            .expectStatus()
+            .isOk
+
+        verify(wordRepository, times(1)).save(word)
+    }
+
+    @Test
+    @WithMockUser(username = "testuser@gmail.com", authorities = ["ROLE_USER", "ROLE_ADMIN"], password = "pwd")
+    fun givenWordID_expectedFetchWord(){
+        `when`(wordRepository.findById(TEST_WORD_ID)).thenReturn(Mono.just(buildWord()))
+
+        webClient.mutateWith(csrf()).get()
+            .uri("/freeman-hangman/words/{id}", TEST_WORD_ID)
+            .header(HttpHeaders.ACCEPT, "application/json")
+            .exchange()
+            .expectStatus()
+            .isOk
+
+        verify(wordRepository, times(1)).findById(TEST_WORD_ID)
+    }
+
+    @Test
+    @WithMockUser(username = "testuser@gmail.com", authorities = ["ROLE_USER", "ROLE_ADMIN"], password = "pwd")
+    fun givenWordPage_expectedFetchWords(){
+        val words = arrayOf(buildWord())
+        val pageable = PageRequest.of(0, 1)
+        val tup = Tuples.of(Mono.just(1L), Flux.fromIterable(words.asIterable()))
+        `when`(wordRepository.findAll(pageable)).thenReturn(tup)
+
+        webClient.mutateWith(csrf()).get()
+            .uri("/freeman-hangman/words/{page}/{size}", 0, 1)
+            .header(HttpHeaders.ACCEPT, "application/json")
+            .exchange()
+            .expectStatus()
+            .isOk
+
+        verify(wordRepository, times(1)).findAll(pageable)
     }
 
 }

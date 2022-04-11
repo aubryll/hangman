@@ -41,13 +41,15 @@ abstract class BaseServiceImpl<T : BaseModel, V : BaseDto, E : BaseRepository<T>
     override fun create(v: V): Mono<ResponseEntity<APIResponse>> {
         return createModel(v)
             .publishOn(Schedulers.boundedElastic())
-            .flatMap { t -> getRepository().save(t) }
+            .flatMap { t ->
+                getRepository().save(t)
+            }
             .flatMap { t ->
                 Mono.just(
                     ResponseEntity.status(HttpStatus.CREATED)
                         .body(APIResponse(status = HttpStatus.CREATED, payload = genericMapper.toDto(t)))
                 )
-            }.switchIfEmpty(Mono.defer { errorResponse() })
+            }
 
     }
 
