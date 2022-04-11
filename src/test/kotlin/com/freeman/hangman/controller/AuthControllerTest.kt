@@ -80,7 +80,7 @@ class AuthControllerTest {
         `when`(userRepository.findByEmail(loginRequest.email)).thenReturn(Mono.just(user))
 
         webClient.mutateWith(csrf()).post()
-            .uri("/freeman-hangman/auth/signin", loginRequest)
+            .uri("/freeman-hangman/auth/signin")
             .contentType(MediaType.APPLICATION_JSON)
             .body(BodyInserters.fromValue(loginRequest))
             .exchange()

@@ -9,6 +9,6 @@ data class UserDto(
     override val id: Int,
     val email: @NotBlank String,
     val name: @NotBlank String,
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) val password: @NotBlank String,
+    val password: @NotBlank String,
     override val createdAt: String?,
 ) : BaseDto(id, createdAt)

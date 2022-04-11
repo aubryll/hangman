@@ -1,12 +1,14 @@
 package com.freeman.hangman
 
-import com.freeman.hangman.repository.base.BaseRepositoryImpl
+import com.freeman.hangman.controller.AuthControllerTest
+import com.freeman.hangman.controller.WordControllerImplTest
+import com.freeman.hangman.service.MatchServiceImplTest
+import com.freeman.hangman.service.UserServiceImplTest
+import com.freeman.hangman.service.WordServiceImplTest
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.data.r2dbc.repository.config.EnableR2dbcRepositories
 
-@SpringBootTest
-@EnableR2dbcRepositories(repositoryBaseClass = BaseRepositoryImpl::class)
+@SpringBootTest(classes = [MatchServiceImplTest::class, UserServiceImplTest::class, WordServiceImplTest::class, AuthControllerTest::class, WordControllerImplTest::class])
 class HangmanApplicationTests {
 
     @Test

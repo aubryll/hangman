@@ -49,8 +49,7 @@ abstract class BaseServiceImpl<T : BaseModel, V : BaseDto, E : BaseRepository<T>
                     ResponseEntity.status(HttpStatus.CREATED)
                         .body(APIResponse(status = HttpStatus.CREATED, payload = genericMapper.toDto(t)))
                 )
-            }
-
+            }.switchIfEmpty(Mono.defer { errorResponse() })
     }
 
     override fun update(v: V): Mono<ResponseEntity<APIResponse>> {

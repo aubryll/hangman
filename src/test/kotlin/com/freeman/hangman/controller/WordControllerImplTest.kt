@@ -86,8 +86,8 @@ class WordControllerImplTest {
     @WithMockUser(username = "testuser@gmail.com", authorities = ["ROLE_USER", "ROLE_ADMIN"], password = "pwd")
     fun givenWordDTO_expectedUpdateWord(){
         val wordDto = WordDto(word = "test word", id = TEST_WORD_ID, createdAt = CURRENT_DATE_TIME.toString())
-        val word = Word("test word", TEST_WORD_ID, CURRENT_DATE_TIME, CURRENT_DATE_TIME)
-        `when`(wordRepository.save(any(Word::class.java))).thenReturn(Mono.just(word))
+
+        `when`(wordRepository.save(any(Word::class.java))).thenReturn(Mono.just(buildWord()))
         `when`(wordRepository.findById(TEST_WORD_ID)).thenReturn(Mono.just(buildWord()))
 
         webClient.mutateWith(csrf()).put()
@@ -98,7 +98,7 @@ class WordControllerImplTest {
             .expectStatus()
             .isOk
 
-        verify(wordRepository, times(1)).save(word)
+        verify(wordRepository, times(1)).save(buildWord())
     }
 
     @Test
@@ -118,7 +118,7 @@ class WordControllerImplTest {
 
     @Test
     @WithMockUser(username = "testuser@gmail.com", authorities = ["ROLE_USER", "ROLE_ADMIN"], password = "pwd")
-    fun givenWordPage_expectedFetchWords(){
+    fun givenPageAndSize_expectedFetchWords(){
         val words = arrayOf(buildWord())
         val pageable = PageRequest.of(0, 1)
         val tup = Tuples.of(Mono.just(1L), Flux.fromIterable(words.asIterable()))
