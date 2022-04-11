@@ -12,7 +12,7 @@
     <artifactId>hangman</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>hangman</name>
-    <description>Hangman game interview challenge</description>
+    <description>Hangman game challenge</description>
     <properties>
         <java.version>11</java.version>
         <kotlin.version>1.6.10</kotlin.version>
