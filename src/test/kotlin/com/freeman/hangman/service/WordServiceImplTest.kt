@@ -1,10 +1,10 @@
 package com.freeman.hangman.service
 
-import com.freeman.hangman.domain.dto.*
+import com.freeman.hangman.domain.dto.APIPaginatedResponse
+import com.freeman.hangman.domain.dto.WordDto
 import com.freeman.hangman.domain.model.Word
 import com.freeman.hangman.repository.WordRepository
 import com.freeman.hangman.service.word.WordServiceImpl
-import com.freeman.hangman.util.Utils
 import com.freeman.hangman.util.Utils.Companion.any
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.AfterEach
@@ -18,7 +18,6 @@ import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
 import org.springframework.security.test.context.support.ReactorContextTestExecutionListener
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestExecutionListeners
@@ -90,7 +89,7 @@ class WordServiceImplTest {
 
     @Test
     fun givenMatched_expectedUserNotFound() {
-        Mockito.`when`(repo.findById(TEST_WORD_ID)).thenReturn(Mono.empty())
+        `when`(repo.findById(TEST_WORD_ID)).thenReturn(Mono.empty())
         val wordMono = wordService.fetch(TEST_WORD_ID)
         StepVerifier.create(wordMono)
             .consumeNextWith { newWord -> Assertions.assertThat(newWord.statusCode).isEqualTo(HttpStatus.NOT_FOUND) }

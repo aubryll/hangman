@@ -1,7 +1,6 @@
 package com.freeman.hangman.controller
 
 import com.freeman.hangman.config.TestConfig
-import com.freeman.hangman.controller.user.AuthController
 import com.freeman.hangman.controller.user.UserControllerImpl
 import com.freeman.hangman.domain.dto.UserDto
 import com.freeman.hangman.domain.model.User
@@ -12,7 +11,6 @@ import com.freeman.hangman.service.user.UserServiceImpl
 import com.freeman.hangman.util.Utils.Companion.any
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.Mock
 import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest
@@ -64,8 +62,8 @@ class UserControllerImplTest {
     @Test
     @WithMockUser(username = "testuser@gmail.com", authorities = ["ROLE_USER", "ROLE_ADMIN"], password = "pwd")
     fun givenUserDto_expectedCreateUser(){
-        val userDto = UserDto(TEST_USER_ID, TEST_EMAIL, "Test User","pwd", CURRENT_DATE_TIME.toString())
-        val user = User(TEST_USER_ID, "Test User", TEST_EMAIL, "pwd", null, CURRENT_DATE_TIME)
+        val userDto = UserDto(0, TEST_EMAIL, "Test User", "pwd", CURRENT_DATE_TIME.toString())
+        val user = User(0, "Test User", TEST_EMAIL, "pwd", null, CURRENT_DATE_TIME)
         Mockito.`when`(userRepository.findByEmail(userDto.email)).thenReturn(Mono.empty())
         Mockito.`when`(userRepository.save(any(User::class.java))).thenReturn(Mono.just(user))
 
